@@ -66,3 +66,8 @@ docker run -p 8080:8080 my-app:local
 | `GET /` | UI principale avec version et métadonnées |
 | `GET /health` | Health check (utilisé par l'ALB) |
 | `GET /info` | Métadonnées JSON (version, région, couleur) |
+
+
+
+
+linkedin : [https://linkedin/](https://www.linkedin.com/in/hicham-elhanafi/)
