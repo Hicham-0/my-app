@@ -30,7 +30,6 @@ phases:
       - . /tmp/build_env
       - docker push $IMAGE_URI
       - docker push $ECR_URI/$ECR_REPO:latest
-      - sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" taskdef.json
       - sed -i "s|<APP_VERSION>|$APP_VERSION|g" taskdef.json
       - echo "=== taskdef.json final ==="
       - cat taskdef.json
