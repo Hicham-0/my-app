@@ -4,46 +4,44 @@ phases:
   install:
     commands:
       - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-      - docker --version
 
   pre_build:
     commands:
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
-      - IMAGE_URI=$ECR_URI/$ECR_REPO:$IMAGE_TAG
-      - APP_VERSION=$(node -p "require('./app/package.json').version")
-      - echo "export IMAGE_URI=$IMAGE_URI" > /tmp/build_env
-      - echo "export APP_VERSION=$APP_VERSION" >> /tmp/build_env
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+      - export IMAGE_URI=$ECR_URI/$ECR_REPO:$IMAGE_TAG
+      - export APP_VERSION=$(node -p "require('./app/package.json').version")
       - echo "Building $IMAGE_URI — APP_VERSION=$APP_VERSION"
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_URI
-      - cd app && npm ci && npm test
-      - cd ..
+      - cd app && npm ci && npm test && cd ..
 
   build:
     commands:
-      - . /tmp/build_env
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+      - export IMAGE_URI=$ECR_URI/$ECR_REPO:$IMAGE_TAG
       - docker build -t $IMAGE_URI .
       - docker tag $IMAGE_URI $ECR_URI/$ECR_REPO:latest
       - trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress $IMAGE_URI
 
-post_build:
-  commands:
-    - . /tmp/build_env
-    - echo "DEBUG IMAGE_URI=$IMAGE_URI"        # ← est-elle vide ?
-    - echo "DEBUG APP_VERSION=$APP_VERSION"    # ← est-elle vide ?
-    - docker push $IMAGE_URI
-    - docker push $ECR_URI/$ECR_REPO:latest
-    - sed -i "s|<APP_VERSION>|$APP_VERSION|g" taskdef.json
-    - sed -i "s|<SUBNET_1>|$SUBNET_1|g" appspec.yaml
-    - sed -i "s|<SUBNET_2>|$SUBNET_2|g" appspec.yaml
-    - sed -i "s|<SECURITY_GROUP>|$SECURITY_GROUP|g" appspec.yaml
-    - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
-    - echo "=== imageDetail.json ==="
-    - cat imageDetail.json
-    - echo "=== taskdef.json final ==="
-    - cat taskdef.json
-    - echo "=== appspec.yaml final ==="
-    - cat appspec.yaml
-    - echo "Build terminé"
+  post_build:
+    commands:
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+      - export IMAGE_URI=$ECR_URI/$ECR_REPO:$IMAGE_TAG
+      - export APP_VERSION=$(node -p "require('./app/package.json').version")
+      - echo "DEBUG IMAGE_URI=$IMAGE_URI"
+      - echo "DEBUG APP_VERSION=$APP_VERSION"
+      - docker push $IMAGE_URI
+      - docker push $ECR_URI/$ECR_REPO:latest
+      - sed -i "s|<APP_VERSION>|$APP_VERSION|g" taskdef.json
+      - sed -i "s|<SUBNET_1>|$SUBNET_1|g" appspec.yaml
+      - sed -i "s|<SUBNET_2>|$SUBNET_2|g" appspec.yaml
+      - sed -i "s|<SECURITY_GROUP>|$SECURITY_GROUP|g" appspec.yaml
+      - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
+      - echo "=== imageDetail.json ==="
+      - cat imageDetail.json
+      - echo "=== taskdef.json ==="
+      - cat taskdef.json
+      - echo "=== appspec.yaml ==="
+      - cat appspec.yaml
 
 artifacts:
   files:
