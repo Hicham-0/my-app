@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blue/Green Deployment</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="card">
+    <div class="badge"><span class="dot"></span> live</div>
+    <p class="version-label">current version</p>
+    <p class="version-number" id="version">—</p>
+    <p class="title">Blue/Green deployment</p>
+    <p class="subtitle">
+      This service is running on AWS ECS Fargate
+      with zero-downtime deployments.
+    </p>
+    <hr class="divider">
+    <div class="meta-grid">
+      <div class="meta-item">
+        <p class="meta-label">environment</p>
+        <p class="meta-value" id="environment">—</p>
+      </div>
+      <div class="meta-item">
+        <p class="meta-label">deployment</p>
+        <p class="meta-value" id="deployColor">—</p>
+      </div>
+      <div class="meta-item">
+        <p class="meta-label">region</p>
+        <p class="meta-value" id="region">—</p>
+      </div>
+      <div class="meta-item">
+        <p class="meta-label">uptime</p>
+        <p class="meta-value" id="uptime">0s</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="health-card">
+    <span class="health-label">/health endpoint</span>
+    <span class="health-status"><span class="dot"></span> healthy</span>
+  </div>
+
+  <script>
+    // Récupère les infos depuis Express et met à jour le DOM
+    fetch('/info')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('version').textContent     = 'v' + data.version;
+        document.getElementById('environment').textContent = data.environment;
+        document.getElementById('deployColor').textContent = data.deployColor;
+        document.getElementById('region').textContent      = data.region;
+        document.title = 'v' + data.version + ' — Blue/Green Deployment';
+      });
+
+    // Uptime counter
+    const start = Date.now();
+    function fmt(s) {
+      if (s < 60) return s + 's';
+      if (s < 3600) return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+      return Math.floor(s / 3600) + 'h ' + Math.floor((s % 3600) / 60) + 'm';
+    }
+    setInterval(() => {
+      document.getElementById('uptime').textContent =
+        fmt(Math.floor((Date.now() - start) / 1000));
+    }, 1000);
+  </script>
+</body>
+</html>
