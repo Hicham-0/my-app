@@ -9,7 +9,7 @@
   "containerDefinitions": [
     {
       "name": "app",
-      "image": "<IMAGE_URI>",
+      "image": "<IMAGE1_URI>",
       "essential": true,
       "portMappings": [
         {
