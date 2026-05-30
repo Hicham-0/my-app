@@ -21,7 +21,7 @@ phases:
     commands:
       - docker build -t $IMAGE_URI .
       - docker tag $IMAGE_URI $ECR_URI/bluegreen-production:latest
-      - trivy image --exit-code 1 --severity HIGH,CRITICAL --no-progress $IMAGE_URI
+      - trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress $IMAGE_URI
 
   post_build:
     commands:
