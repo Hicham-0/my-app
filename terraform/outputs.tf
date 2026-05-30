@@ -17,3 +17,11 @@ output "ecs_service_name" {
   description = "Nom du service ECS"
   value       = module.ecs.service_name
 }
+
+output "pipeline_name" {
+  value = module.cicd.pipeline_name
+}
+
+output "github_connection_arn" {
+  value = module.cicd.github_connection_arn
+}

@@ -39,3 +39,30 @@ module "ecs" {
   ecr_repo_url          = module.ecr.repository_url
   app_version           = var.app_version
 }
+
+module "cicd" {
+  source = "./modules/cicd"
+
+  project     = var.project
+  environment = var.environment
+  aws_region  = var.aws_region
+
+  github_repo   = "Hicham-0/my-app"
+  github_branch = "main"
+
+  ecr_repository_url = module.ecr.repository_url
+  ecs_cluster_name   = module.ecs.cluster_name
+  ecs_service_name   = module.ecs.service_name
+
+  codebuild_role_arn    = module.iam.codebuild_role_arn
+  codepipeline_role_arn = module.iam.codepipeline_role_arn
+  codedeploy_role_arn   = module.iam.codedeploy_role_arn
+
+  target_group_blue_name  = module.alb.target_group_blue_name
+  target_group_green_name = module.alb.target_group_green_name
+  listener_http_arn       = module.alb.listener_http_arn
+  listener_test_arn       = module.alb.listener_test_arn
+
+  private_subnet_ids          = module.vpc.private_subnet_ids
+  ecs_tasks_security_group_id = module.ecs.ecs_tasks_security_group_id
+}
