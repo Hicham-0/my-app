@@ -39,7 +39,7 @@ resource "aws_codebuild_project" "main" {
     image                       = "aws/codebuild/standard:7.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
-    privileged_mode             = true   # nécessaire pour docker build
+    privileged_mode             = true # nécessaire pour docker build
   }
 
   source {
@@ -119,8 +119,20 @@ resource "aws_codedeploy_deployment_group" "main" {
 
 # ── CodePipeline ───────────────────────────────────────────────
 resource "aws_codepipeline" "main" {
-  name     = "${var.project}-${var.environment}-pipeline"
-  role_arn = var.codepipeline_role_arn
+  name          = "${var.project}-${var.environment}-pipeline"
+  role_arn      = var.codepipeline_role_arn
+  pipeline_type = "V2"
+  trigger {
+    provider_type = "CodeStarSourceConnection"
+    git_configuration {
+      source_action_name = "GitHub_Source"
+      push {
+        branches {
+          includes = ["main"]
+        }
+      }
+    }
+  }
 
   artifact_store {
     location = aws_s3_bucket.artifacts.bucket
