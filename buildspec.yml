@@ -27,7 +27,7 @@ phases:
     commands:
       - docker push $IMAGE_URI
       - docker push $ECR_URI/bluegreen-production:latest
-      - sed -i "s|<IMAGE1_URI>|$IMAGE_URI|g" taskdef.json
+      - sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" taskdef.json
       - sed -i "s|<APP_VERSION>|$APP_VERSION|g" taskdef.json
       - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
       - echo "Build terminé — image $IMAGE_URI"
