@@ -11,8 +11,8 @@ phases:
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
       - IMAGE_URI=$ECR_URI/$ECR_REPO:$IMAGE_TAG
       - APP_VERSION=$(node -p "require('./app/package.json').version")
-      - echo "IMAGE_URI=$IMAGE_URI" > /tmp/build_env
-      - echo "APP_VERSION=$APP_VERSION" >> /tmp/build_env
+      - echo "export IMAGE_URI=$IMAGE_URI" > /tmp/build_env
+      - echo "export APP_VERSION=$APP_VERSION" >> /tmp/build_env
       - echo "Building $IMAGE_URI — APP_VERSION=$APP_VERSION"
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_URI
       - cd app && npm ci && npm test
@@ -20,14 +20,14 @@ phases:
 
   build:
     commands:
-      - source /tmp/build_env
+      - . /tmp/build_env
       - docker build -t $IMAGE_URI .
       - docker tag $IMAGE_URI $ECR_URI/$ECR_REPO:latest
       - trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress $IMAGE_URI
 
   post_build:
     commands:
-      - source /tmp/build_env
+      - . /tmp/build_env
       - docker push $IMAGE_URI
       - docker push $ECR_URI/$ECR_REPO:latest
       - sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" taskdef.json
