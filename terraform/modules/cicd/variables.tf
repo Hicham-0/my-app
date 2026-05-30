@@ -68,3 +68,18 @@ variable "private_subnet_ids" {
 variable "ecs_tasks_security_group_id" {
   type = string
 }
+
+variable "ecr_uri" {
+  description = "ECR registry URI (account.dkr.ecr.region.amazonaws.com)"
+  type        = string
+}
+
+variable "ecr_repository_name" {
+  description = "ECR repository name"
+  type        = string
+}
+
+variable "aws_account_id" {
+  description = "AWS Account ID"
+  type        = string
+}

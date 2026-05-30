@@ -40,7 +40,27 @@ resource "aws_codebuild_project" "main" {
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = true # nécessaire pour docker build
+
+    environment_variable {
+      name  = "ECR_URI"
+      value = var.ecr_uri
+    }
+
+    environment_variable {
+      name  = "ECR_REPO"
+      value = var.ecr_repository_name
+    }
+
+    environment_variable {
+      name  = "AWS_ACCOUNT_ID"
+      value = var.aws_account_id
+    }
   }
+
+
+
+
+
 
   source {
     type      = "CODEPIPELINE"
