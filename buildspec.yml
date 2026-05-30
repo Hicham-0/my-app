@@ -28,18 +28,22 @@ phases:
 post_build:
   commands:
     - . /tmp/build_env
+    - echo "DEBUG IMAGE_URI=$IMAGE_URI"        # ← est-elle vide ?
+    - echo "DEBUG APP_VERSION=$APP_VERSION"    # ← est-elle vide ?
     - docker push $IMAGE_URI
     - docker push $ECR_URI/$ECR_REPO:latest
     - sed -i "s|<APP_VERSION>|$APP_VERSION|g" taskdef.json
     - sed -i "s|<SUBNET_1>|$SUBNET_1|g" appspec.yaml
     - sed -i "s|<SUBNET_2>|$SUBNET_2|g" appspec.yaml
     - sed -i "s|<SECURITY_GROUP>|$SECURITY_GROUP|g" appspec.yaml
+    - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
+    - echo "=== imageDetail.json ==="
+    - cat imageDetail.json
     - echo "=== taskdef.json final ==="
     - cat taskdef.json
     - echo "=== appspec.yaml final ==="
     - cat appspec.yaml
-    - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
-    - echo "Build terminé — image $IMAGE_URI"
+    - echo "Build terminé"
 
 artifacts:
   files:
