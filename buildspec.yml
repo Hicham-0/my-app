@@ -25,16 +25,21 @@ phases:
       - docker tag $IMAGE_URI $ECR_URI/$ECR_REPO:latest
       - trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --no-progress $IMAGE_URI
 
-  post_build:
-    commands:
-      - . /tmp/build_env
-      - docker push $IMAGE_URI
-      - docker push $ECR_URI/$ECR_REPO:latest
-      - sed -i "s|<APP_VERSION>|$APP_VERSION|g" taskdef.json
-      - echo "=== taskdef.json final ==="
-      - cat taskdef.json
-      - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
-      - echo "Build terminé — image $IMAGE_URI"
+post_build:
+  commands:
+    - . /tmp/build_env
+    - docker push $IMAGE_URI
+    - docker push $ECR_URI/$ECR_REPO:latest
+    - sed -i "s|<APP_VERSION>|$APP_VERSION|g" taskdef.json
+    - sed -i "s|<SUBNET_1>|$SUBNET_1|g" appspec.yaml
+    - sed -i "s|<SUBNET_2>|$SUBNET_2|g" appspec.yaml
+    - sed -i "s|<SECURITY_GROUP>|$SECURITY_GROUP|g" appspec.yaml
+    - echo "=== taskdef.json final ==="
+    - cat taskdef.json
+    - echo "=== appspec.yaml final ==="
+    - cat appspec.yaml
+    - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
+    - echo "Build terminé — image $IMAGE_URI"
 
 artifacts:
   files:
