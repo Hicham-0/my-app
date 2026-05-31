@@ -65,9 +65,6 @@ module "cicd" {
   listener_http_arn       = module.alb.listener_http_arn
   listener_test_arn       = module.alb.listener_test_arn
 
-  private_subnet_ids          = module.vpc.private_subnet_ids
-  ecs_tasks_security_group_id = module.ecs.ecs_tasks_security_group_id
-
   ecr_uri             = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
   ecr_repository_name = module.ecr.repository_name
   aws_account_id      = data.aws_caller_identity.current.account_id

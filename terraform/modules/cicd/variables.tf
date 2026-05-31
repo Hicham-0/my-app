@@ -61,13 +61,6 @@ variable "listener_test_arn" {
   type = string
 }
 
-variable "private_subnet_ids" {
-  type = list(string)
-}
-
-variable "ecs_tasks_security_group_id" {
-  type = string
-}
 
 variable "ecr_uri" {
   description = "ECR registry URI (account.dkr.ecr.region.amazonaws.com)"

@@ -55,19 +55,15 @@ resource "aws_codebuild_project" "main" {
       name  = "AWS_ACCOUNT_ID"
       value = var.aws_account_id
     }
+
     environment_variable {
-      name  = "SUBNET_1"
-      value = var.private_subnet_ids[0]
+      name  = "PROJECT"
+      value = var.project
     }
 
     environment_variable {
-      name  = "SUBNET_2"
-      value = var.private_subnet_ids[1]
-    }
-
-    environment_variable {
-      name  = "SECURITY_GROUP"
-      value = var.ecs_tasks_security_group_id
+      name  = "ENVIRONMENT"
+      value = var.environment
     }
   }
 

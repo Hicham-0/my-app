@@ -1,11 +1,11 @@
 {
-  "family": "bluegreen-production",
+  "family": "PLACEHOLDER",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "arn:aws:iam::266833220419:role/bluegreen-production-ecs-execution-role",
-  "taskRoleArn": "arn:aws:iam::266833220419:role/bluegreen-production-ecs-task-role",
+  "executionRoleArn": "PLACEHOLDER",
+  "taskRoleArn": "PLACEHOLDER",
   "containerDefinitions": [
     {
       "name": "app",
@@ -18,16 +18,15 @@
         }
       ],
       "environment": [
-        { "name": "APP_VERSION",  "value": "<APP_VERSION>" },
-        { "name": "ENVIRONMENT",  "value": "production" },
-        { "name": "DEPLOY_COLOR", "value": "green" },
-        { "name": "AWS_REGION",   "value": "us-east-1" }
+        { "name": "APP_VERSION",  "value": "PLACEHOLDER" },
+        { "name": "ENVIRONMENT",  "value": "PLACEHOLDER" },
+        { "name": "AWS_REGION",   "value": "PLACEHOLDER" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/bluegreen-production",
-          "awslogs-region": "us-east-1",
+          "awslogs-group": "PLACEHOLDER",
+          "awslogs-region": "PLACEHOLDER",
           "awslogs-stream-prefix": "ecs"
         }
       },

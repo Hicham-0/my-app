@@ -10,7 +10,8 @@ phases:
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
       - export IMAGE_URI=$ECR_URI/$ECR_REPO:$IMAGE_TAG
       - export APP_VERSION=$(node -p "require('./app/package.json').version")
-      - echo "Building $IMAGE_URI — APP_VERSION=$APP_VERSION"
+      - export FAMILY=$PROJECT-$ENVIRONMENT
+      - echo "Building $IMAGE_URI — APP_VERSION=$APP_VERSION — FAMILY=$FAMILY"
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_URI
       - cd app && npm ci && npm test && cd ..
 
@@ -27,21 +28,31 @@ phases:
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
       - export IMAGE_URI=$ECR_URI/$ECR_REPO:$IMAGE_TAG
       - export APP_VERSION=$(node -p "require('./app/package.json').version")
-      - echo "DEBUG IMAGE_URI=$IMAGE_URI"
-      - echo "DEBUG APP_VERSION=$APP_VERSION"
+      - export FAMILY=$PROJECT-$ENVIRONMENT
+      - export EXEC_ROLE_ARN="arn:aws:iam::$AWS_ACCOUNT_ID:role/$FAMILY-ecs-execution-role"
+      - export TASK_ROLE_ARN="arn:aws:iam::$AWS_ACCOUNT_ID:role/$FAMILY-ecs-task-role"
+      - export LOG_GROUP="/ecs/$FAMILY"
       - docker push $IMAGE_URI
       - docker push $ECR_URI/$ECR_REPO:latest
-      - sed -i "s|<APP_VERSION>|$APP_VERSION|g" taskdef.json
-      - sed -i "s|<SUBNET_1>|$SUBNET_1|g" appspec.yaml
-      - sed -i "s|<SUBNET_2>|$SUBNET_2|g" appspec.yaml
-      - sed -i "s|<SECURITY_GROUP>|$SECURITY_GROUP|g" appspec.yaml
+      - |
+        jq \
+          --arg fam "$FAMILY" \
+          --arg execRole "$EXEC_ROLE_ARN" \
+          --arg taskRole "$TASK_ROLE_ARN" \
+          --arg ver "$APP_VERSION" \
+          --arg env "$ENVIRONMENT" \
+          --arg reg "$AWS_DEFAULT_REGION" \
+          --arg log "$LOG_GROUP" \
+          '.family = $fam |
+           .executionRoleArn = $execRole |
+           .taskRoleArn = $taskRole |
+           .containerDefinitions[0].environment[0].value = $ver |
+           .containerDefinitions[0].environment[1].value = $env |
+           .containerDefinitions[0].environment[2].value = $reg |
+           .containerDefinitions[0].logConfiguration.options["awslogs-group"] = $log |
+           .containerDefinitions[0].logConfiguration.options["awslogs-region"] = $reg' \
+          taskdef.json > taskdef.tmp.json && mv taskdef.tmp.json taskdef.json
       - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
-      - echo "=== imageDetail.json ==="
-      - cat imageDetail.json
-      - echo "=== taskdef.json ==="
-      - cat taskdef.json
-      - echo "=== appspec.yaml ==="
-      - cat appspec.yaml
 
 artifacts:
   files:
