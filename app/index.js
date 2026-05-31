@@ -2,11 +2,11 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-const PORT = process.env.PORT || 8080;
-const APP_VERSION = process.env.APP_VERSION ;
-const ENVIRONMENT = process.env.ENVIRONMENT ;
-const REGION = process.env.AWS_DEFAULT_REGION ;
-const DEPLOY_COLOR = process.env.DEPLOY_COLOR ;
+
+const APP_VERSION  = process.env.APP_VERSION        || '1.0.0';
+const ENVIRONMENT  = process.env.ENVIRONMENT        || 'development';
+const REGION       = process.env.AWS_DEFAULT_REGION || process.env.AWS_REGION || 'us-east-1';
+const DEPLOY_COLOR = process.env.DEPLOY_COLOR       || 'blue';
 
 // Sert tous les fichiers dans public/ automatiquement
 app.use(express.static(path.join(__dirname, 'public')));
@@ -17,7 +17,7 @@ app.get('/info', (req, res) => {
     version: APP_VERSION,
     environment: ENVIRONMENT,
     region: REGION,
-    deployColor = DEPLOY_COLOR
+    deployColor : DEPLOY_COLOR
   });
 });
 
