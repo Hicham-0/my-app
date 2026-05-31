@@ -170,6 +170,17 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "s3:GetObjectVersion"
         ]
         Resource = "*"
+      },
+
+      # codebuild pour savoir le current target group et listeners
+      {
+        Effect = "Allow"
+        Action = [
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeLoadBalancers"
+        ]
+        Resource = "*"
       }
     ]
   })
