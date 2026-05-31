@@ -16,7 +16,6 @@ app.get('/info', (req, res) => {
   res.json({
     version: APP_VERSION,
     environment: ENVIRONMENT,
-    deployColor: DEPLOY_COLOR,
     region: REGION
   });
 });
