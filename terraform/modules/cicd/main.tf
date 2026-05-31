@@ -65,6 +65,13 @@ resource "aws_codebuild_project" "main" {
       name  = "ENVIRONMENT"
       value = var.environment
     }
+
+    environment_variable {
+      name  = "LISTENER_ARN"
+      value = var.listener_http_arn
+    }
+
+
   }
 
 

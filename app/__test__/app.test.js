@@ -15,6 +15,7 @@ describe('Application endpoints', () => {
     expect(res.body).toHaveProperty('version');
     expect(res.body).toHaveProperty('environment');
     expect(res.body).toHaveProperty('region');
+    expect(res.body).toHaveProperty('deployColor'); 
   });
 
   test('GET /health retourne 200 et status healthy', async () => {

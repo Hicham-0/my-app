@@ -20,7 +20,8 @@
       "environment": [
         { "name": "APP_VERSION",  "value": "PLACEHOLDER" },
         { "name": "ENVIRONMENT",  "value": "PLACEHOLDER" },
-        { "name": "AWS_REGION",   "value": "PLACEHOLDER" }
+        { "name": "AWS_REGION",   "value": "PLACEHOLDER" },
+        { "name": "DEPLOY_COLOR", "value": "PLACEHOLDER" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",

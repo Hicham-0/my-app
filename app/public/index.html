@@ -17,21 +17,24 @@
       with zero-downtime deployments.
     </p>
     <hr class="divider">
-    <div class="meta-grid">
-      <div class="meta-item">
-        <p class="meta-label">environment : </p>
-        <p class="meta-value" id="environment">—</p>
-      </div>
-      <div class="meta-item">
-        <p class="meta-label">region : </p>
-        <p class="meta-value" id="region">—</p>
-      </div>
-      <div class="meta-item">
-        <p class="meta-label">uptime</p>
-        <p class="meta-value" id="uptime">0s</p>
-      </div>
-    </div>
+<div class="meta-grid">
+  <div class="meta-item">
+    <p class="meta-label">environment</p>
+    <p class="meta-value" id="environment">—</p>
   </div>
+  <div class="meta-item">
+    <p class="meta-label">deployment</p>
+    <p class="meta-value" id="deployColor">—</p>
+  </div>
+  <div class="meta-item">
+    <p class="meta-label">region</p>
+    <p class="meta-value" id="region">—</p>
+  </div>
+  <div class="meta-item">
+    <p class="meta-label">uptime</p>
+    <p class="meta-value" id="uptime">0s</p>
+  </div>
+</div>
 
   <div class="health-card">
     <span class="health-label">/health endpoint</span>
@@ -40,15 +43,15 @@
 
   <script>
     // Récupère les infos depuis Express et met à jour le DOM
-    fetch('/info')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('version').textContent     = 'v' + data.version;
-        document.getElementById('environment').textContent = data.environment;
-        document.getElementById('deployColor').textContent = data.deployColor;
-        document.getElementById('region').textContent      = data.region;
-        document.title = 'v' + data.version + ' — Blue/Green Deployment';
-      });
+fetch('/info')
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('version').textContent     = 'v' + data.version;
+    document.getElementById('environment').textContent = data.environment;
+    document.getElementById('deployColor').textContent = data.deployColor;  // ← ajoute
+    document.getElementById('region').textContent      = data.region;
+    document.title = 'v' + data.version + ' — Blue/Green Deployment';
+  });
 
     // Uptime counter
     const start = Date.now();

@@ -32,8 +32,22 @@ phases:
       - export EXEC_ROLE_ARN="arn:aws:iam::$AWS_ACCOUNT_ID:role/$FAMILY-ecs-execution-role"
       - export TASK_ROLE_ARN="arn:aws:iam::$AWS_ACCOUNT_ID:role/$FAMILY-ecs-task-role"
       - export LOG_GROUP="/ecs/$FAMILY"
+
+      # Détermine quelle couleur est active sur le listener port 80
+      - export CURRENT_TG=$(aws elbv2 describe-listeners --region $AWS_DEFAULT_REGION --listener-arns $LISTENER_ARN --query "Listeners[0].DefaultActions[0].TargetGroupArn" --output text)
+      - echo "Current TG = $CURRENT_TG"
+      - |
+        if echo "$CURRENT_TG" | grep -q "blue"; then
+          export DEPLOY_COLOR="green"
+        else
+          export DEPLOY_COLOR="blue"
+        fi
+      - echo "Next DEPLOY_COLOR = $DEPLOY_COLOR"
+
       - docker push $IMAGE_URI
       - docker push $ECR_URI/$ECR_REPO:latest
+
+      # Injecte toutes les valeurs dans taskdef.json via jq
       - |
         jq \
           --arg fam "$FAMILY" \
@@ -43,15 +57,18 @@ phases:
           --arg env "$ENVIRONMENT" \
           --arg reg "$AWS_DEFAULT_REGION" \
           --arg log "$LOG_GROUP" \
+          --arg color "$DEPLOY_COLOR" \
           '.family = $fam |
            .executionRoleArn = $execRole |
            .taskRoleArn = $taskRole |
            .containerDefinitions[0].environment[0].value = $ver |
            .containerDefinitions[0].environment[1].value = $env |
            .containerDefinitions[0].environment[2].value = $reg |
+           .containerDefinitions[0].environment[3].value = $color |
            .containerDefinitions[0].logConfiguration.options["awslogs-group"] = $log |
            .containerDefinitions[0].logConfiguration.options["awslogs-region"] = $reg' \
           taskdef.json > taskdef.tmp.json && mv taskdef.tmp.json taskdef.json
+
       - printf '{"ImageURI":"%s"}' $IMAGE_URI > imageDetail.json
 
 artifacts:
