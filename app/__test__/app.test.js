@@ -13,7 +13,7 @@ describe('Application endpoints', () => {
     const res = await request(app).get('/info');
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('version');
-    expect(res.body).toHaveProperty('deployColor');
+    expect(res.body).toHaveProperty('environment');
     expect(res.body).toHaveProperty('region');
   });
 
