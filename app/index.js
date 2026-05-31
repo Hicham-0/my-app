@@ -7,6 +7,7 @@ const APP_VERSION  = process.env.APP_VERSION        || '1.0.0';
 const ENVIRONMENT  = process.env.ENVIRONMENT        || 'development';
 const REGION       = process.env.AWS_DEFAULT_REGION || process.env.AWS_REGION || 'us-east-1';
 const DEPLOY_COLOR = process.env.DEPLOY_COLOR       || 'blue';
+const PORT = process.env.PORT || 8080;
 
 // Sert tous les fichiers dans public/ automatiquement
 app.use(express.static(path.join(__dirname, 'public')));
