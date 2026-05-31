@@ -37,7 +37,7 @@ phases:
       - export CURRENT_TG=$(aws elbv2 describe-listeners --region $AWS_DEFAULT_REGION --listener-arns $LISTENER_ARN --query "Listeners[0].DefaultActions[0].TargetGroupArn" --output text)
       - echo "Current TG = $CURRENT_TG"
       - |
-        if echo "$CURRENT_TG" | grep -q "blue"; then
+        if echo "$CURRENT_TG" | grep -q "\-tg\-blue"; then
           export DEPLOY_COLOR="green"
         else
           export DEPLOY_COLOR="blue"

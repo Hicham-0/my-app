@@ -1,4 +1,4 @@
-FROM node:26-alpine
+FROM public.ecr.aws/docker/library/node:26-alpine
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
